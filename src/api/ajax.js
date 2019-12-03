@@ -6,7 +6,8 @@ import qs from 'qs'
 
 // 创建一个Axios的实例(功能上)
 const instance = axios.create({
-  timeout: 10000 // 设置请求超时时间
+  timeout: 10000, // 设置请求超时时间
+  baseURL: '/api' // 所有的请求都有一个基础路径
 })
 
 /**
