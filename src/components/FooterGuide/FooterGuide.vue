@@ -1,24 +1,24 @@
 <template>
   <footer class="footer_guide border-1px">
-    <span class="guide_item" :class="{on: '/msite' === $route.path}" @click="goto('/msite')">
+    <span class="guide_item" :class="{on: '/msite' === $route.path}" @click="goTo('/msite')">
       <span class="item_icon">
         <i class="iconfont icon-waimai"></i>
       </span>
       <span>外卖</span>
     </span>
-    <span class="guide_item" :class="{on: '/search' === $route.path}" @click="goto('/search')">
+    <span class="guide_item" :class="{on: '/search' === $route.path}" @click="goTo('/search')">
       <span class="item_icon">
         <i class="iconfont icon-search"></i>
       </span>
       <span>搜索</span>
     </span>
-    <span class="guide_item" :class="{on: '/order' === $route.path}" @click="goto('/order')">
+    <span class="guide_item" :class="{on: '/order' === $route.path}" @click="goTo('/order')">
       <span class="item_icon">
         <i class="iconfont icon-dingdan"></i>
       </span>
       <span>订单</span>
     </span>
-    <span class="guide_item" :class="{on: '/profile' === $route.path}" @click="goto('/profile')">
+    <span class="guide_item" :class="{on: '/profile' === $route.path}" @click="goTo('/profile')">
       <span class="item_icon">
         <i class="iconfont icon-geren"></i>
       </span>
@@ -29,13 +29,19 @@
 
 <script type="text/scmascript-6">
   export default {
-
+    name: 'FooterGuide',
+    methods: {
+      goTo(path) {
+        this.$router.replace(path)
+      }
+    }
   }
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus" scoped>
   @import "../../common/stylus/mixins.styl"
   .footer_guide  //footer
+    touch-action none
     top-border-1px(#e4e4e4)
     position fixed
     z-index 100
