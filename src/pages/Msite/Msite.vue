@@ -11,27 +11,30 @@
     </Header>
     <!--首页导航-->
     <nav class="msite_nav">
-      <div class="swiper-container">
+      <div class="swiper-container" v-if="categorys.length > 0">
         <div class="swiper-wrapper">
           <!-- categorys -->
           <div class="swiper-slide" v-for="(categorys, index) in categorysArr" :key="index">
             <a href="javascript:" class="link_to_food" v-for="(category, index) in categorys" :key="index">
               <div class="food_container">
-                <img src="./images/nav/1.jpg">
+                <img :src="'https://fuss10.elemecdn.com' + category.image_url">
               </div>
-              <span>甜品饮品</span>
+              <span>{{category.title}}</span>
             </a>
           </div>
         </div>
         <!-- Add Pagination -->
         <div class="swiper-pagination"></div>
       </div>
+      <img src="./images/msite_back.svg" alt="" v-else>
     </nav>
     <ShopList/>
   </section>
 </template>
 
 <script type="text/scmascript-6">
+  // import _ from 'lodash' // 打包所有工具函数的模块
+  import chunk from 'lodash/chunk' // 只引入需要的工具函数
   import { mapState } from 'vuex'
   import Swiper from 'swiper'
   import 'swiper/css/swiper.min.css'
@@ -43,12 +46,27 @@
   export default {
 
 
-    mounted() {
+    async mounted() {
+      
+      this.$store.dispatch('getShops')
+
 
       // 异步获取分类列表到vuex的state
-      this.$store.dispatch('getCategorys')
-
-      // 创建Swiper对象的时机: 必须在列表数据显示之后
+      // this.$store.dispatch('getCategorys', () => { // categorys状态数据更新了
+      //   // 在此次数据变化导致界面更新后执行
+      //   this.$nextTick(() => {
+      //     // 创建Swiper对象的时机: 必须在列表数据显示之后
+      //     new Swiper('.swiper-container', {
+      //       loop: true, // 循环模式选项
+      //       // 如果需要分页器
+      //       pagination: {
+      //         el: '.swiper-pagination'
+      //       }
+      //     })
+      //   })
+      // })
+      await this.$store.dispatch('getCategorys') // dispatch()返回的promise在状态更新且界面更新后才成功
+       // 创建Swiper对象的时机: 必须在列表数据显示之后
       new Swiper('.swiper-container', {
         loop: true, // 循环模式选项
         // 如果需要分页器
@@ -60,13 +78,46 @@
   
 
     computed: {
-      ...mapState(['address', 'categorys'])
+      ...mapState(['address', 'categorys']),
+      // 分类轮播的二维数据
+      // 小数组的长度最大为8
+      categorysArr() {
+        const { categorys } = this
+        // return _.chunk(categorys, 8)
+        return chunk(categorys, 8)
+      }
     },
+    // watch: {
+    //   /**
+    //    * vue处理: 更新状态数据 ==> 调用监视的回调函数 ==> 异步更新界面
+    //    */
+    //   categorys() { // categorys状态数据更新了
+    //     // 在此次数据变化导致界面更新后执行
+    //     this.$nextTick(() => {
+    //       // 创建Swiper对象的时机: 必须在列表数据显示之后
+    //       new Swiper('.swiper-container', {
+    //         loop: true, // 循环模式选项
+    //         // 如果需要分页器
+    //         pagination: {
+    //           el: '.swiper-pagination'
+    //         }
+    //       })
+    //     })
+    //   }
+    // },
 
     components: {
       ShopList
     }
   }
+
+  /**
+   * 解决swiper异步轮播的bug
+   * 1. watch + nextTick()
+   * 2. callback + nextTick
+   * 3. 利用dispatch()返回的promise
+   */
+
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus" scoped>
