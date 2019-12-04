@@ -76,7 +76,7 @@
                   v-validate="{required: true,regex: /^[0-9a-zA-Z]{4}$/}"
                 >
                 <span style="color: red;" v-show="errors.has('captcha')">{{ errors.first('captcha') }}</span>
-                <img class="get_verification" src="./images/captcha.svg" alt="captcha">
+                <img ref="captcha" class="get_verification" src="http://localhost:4000/captcha" alt="captcha" @click="updateCaptcha">
               </section>
             </section>
           </div>
@@ -95,7 +95,7 @@
   export default {
     data() {
       return {
-        loginWay: true, // true: 短信登录, false: 密码登录
+        loginWay: false, // true: 短信登录, false: 密码登录
         phone: '', // 手机号
         code: '', // 短信验证码
         name: '', // 用户名
@@ -114,6 +114,7 @@
     },
 
     methods: {
+
       sendCode() {
         // 设置computeTime为最大值
         this.computeTime = 10
@@ -125,6 +126,7 @@
           }
         }, 1000);
       },
+
       async login() {   
         let names
         if(this.loginWay) {
@@ -136,6 +138,14 @@
         if(success) {
           alert('提交登录请求')
         }
+      },
+
+      /**
+       * 更新图形验证码
+       */
+      updateCaptcha() {
+        // 如何让浏览器对图片重新请求: 图片地址携带一个时间戳参数
+        this.$refs.captcha.src = `http://localhost:4000/captcha?time=${Date.now()}`
       }
     }
   }
