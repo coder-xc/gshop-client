@@ -92,6 +92,7 @@
 </template>
 
 <script type="text/scmascript-6">
+  import { Toast } from 'mint-ui'
   export default {
     data() {
       return {
@@ -114,17 +115,28 @@
     },
 
     methods: {
-
-      sendCode() {
+      /**
+       * 发送短信验证码
+       */
+      async sendCode() {
         // 设置computeTime为最大值
         this.computeTime = 10
         // 启动循环定时器, 每隔1s将computeTime减1
         const intervalId = setInterval(() => {
           this.computeTime--
-          if(this.computeTime === 0) {
+          if(this.computeTime <= 0) {
             clearInterval(intervalId)
           }
         }, 1000);
+
+        // 发请求 ==> 发短信的接口
+        const result = await this.$API.reqSendCode(this.phone)
+        if(result.code === 0) {
+          Toast('短信发送成功!')
+        } else {
+          this.computeTime = 0
+          Toast(result.msg)
+        }
       },
 
       async login() {   
