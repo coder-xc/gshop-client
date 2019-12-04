@@ -4,44 +4,83 @@
       <div class="login_header">
         <h2 class="login_logo">硅谷外卖</h2>
         <div class="login_header_title">
-          <a href="javascript:;" class="on">短信登录</a>
-          <a href="javascript:;">密码登录</a>
+          <a href="javascript:;" :class="{on: loginWay}" @click="loginWay = true">短信登录</a>
+          <a href="javascript:;" :class="{on: !loginWay}" @click="loginWay = false">密码登录</a>
         </div>
       </div>
       <div class="login_content">
-        <form>
-          <div class="on">
+        <form name="names">
+          <div :class="{on: loginWay}">,
             <section class="login_message">
-              <input type="tel" maxlength="11" placeholder="手机号">
-              <button disabled="disabled" class="get_verification">获取验证码</button>
+              <input 
+                type="tel" 
+                maxlength="11" 
+                placeholder="手机号"  
+                v-model="phone" 
+                name="phone" 
+                v-validate="'required|mobile'"
+              >
+               <span style="color: red;" v-show="errors.has('phone')">{{ errors.first('phone') }}</span>
+              <button 
+                :disabled="!isRigthPhone || computeTime > 0"
+                class="get_verification"
+                @click.prevent="sendCode"
+                :class="{right_phone_number: isRigthPhone}"
+              >
+                {{computeTime > 0 ? `短信已发送(${computeTime}s)` : '发送验证码'}}
+              </button>
             </section>
             <section class="login_verification">
-              <input type="tel" maxlength="8" placeholder="验证码">
+              <input type="text" name="code" v-validate="{required: true,regex: /^\d{6}$/}" maxlength="6" placeholder="验证码" v-model="code">
+              <span style="color: red;" v-show="errors.has('code')">{{ errors.first('code') }}</span>
             </section>
             <section class="login_hint">
               温馨提示：未注册硅谷外卖帐号的手机号，登录时将自动注册，且代表已同意
               <a href="javascript:;">《用户服务协议》</a>
             </section>
           </div>
-          <div>
+          <div :class="{on: !loginWay}">
             <section>
               <section class="login_message">
-                <input type="tel" maxlength="11" placeholder="手机/邮箱/用户名">
+                <input 
+                  type="text" 
+                  maxlength="11" 
+                  placeholder="手机/邮箱/用户名" 
+                  v-validate="'required'" 
+                  name="name" 
+                  v-model="name"
+                >
+                <span style="color: red;" v-show="errors.has('name')">{{ errors.first('name') }}</span>
               </section>
               <section class="login_verification">
-                <input type="tel" maxlength="8" placeholder="密码">
-                <div class="switch_button off">
-                  <div class="switch_circle"></div>
-                  <span class="switch_text">...</span>
+                <input 
+                  :type="isShowPwd ? 'text' : 'password'" 
+                  placeholder="密码" 
+                  v-model="pwd" 
+                  name="pwd" 
+                  v-validate="'required'"
+                >
+                <span style="color: red;" v-show="errors.has('pwd')">{{ errors.first('pwd') }}</span>
+                <div class="switch_button" :class="isShowPwd ? 'on' : 'off'" @click="isShowPwd = !isShowPwd">
+                  <div class="switch_circle" :class="{right: isShowPwd}"></div>
+                  <span class="switch_text">{{isShowPwd ? 'abc' : ''}}</span>
                 </div>
               </section>
               <section class="login_message">
-                <input type="text" maxlength="11" placeholder="验证码">
+                <input 
+                  type="text" 
+                  maxlength="11" 
+                  placeholder="验证码"
+                  v-model="captcha" 
+                  name="captcha" 
+                  v-validate="{required: true,regex: /^[0-9a-zA-Z]{4}$/}"
+                >
+                <span style="color: red;" v-show="errors.has('captcha')">{{ errors.first('captcha') }}</span>
                 <img class="get_verification" src="./images/captcha.svg" alt="captcha">
               </section>
             </section>
           </div>
-          <button class="login_submit">登录</button>
+          <button class="login_submit" @click.prevent="login">登录</button>
         </form>
         <a href="javascript:;" class="about_us">关于我们</a>
       </div>
@@ -54,7 +93,51 @@
 
 <script type="text/scmascript-6">
   export default {
+    data() {
+      return {
+        loginWay: true, // true: 短信登录, false: 密码登录
+        phone: '', // 手机号
+        code: '', // 短信验证码
+        name: '', // 用户名
+        pwd: '', // 密码
+        captcha: '', // 图形验证码
+        computeTime: 0,// 计时剩余时间
+        isShowPwd: false, // 是否显示密码
+      }
+    },
+  
+    computed: {
+      /* 判断phone是否是一个正确的手机号 */
+      isRigthPhone() {
+        return /^1\d{10}$/.test(this.phone)
+      }
+    },
 
+    methods: {
+      sendCode() {
+        // 设置computeTime为最大值
+        this.computeTime = 10
+        // 启动循环定时器, 每隔1s将computeTime减1
+        const intervalId = setInterval(() => {
+          this.computeTime--
+          if(this.computeTime === 0) {
+            clearInterval(intervalId)
+          }
+        }, 1000);
+      },
+      async login() {   
+        let names
+        if(this.loginWay) {
+          names = ['phone', 'code']
+        } else {
+          names = ['name', 'pwd', 'captcha']
+        }
+        const success = await this.$validator.validateAll(names)
+        if(success) {
+          alert('提交登录请求')
+        }
+      }
+    }
   }
 </script>
 
@@ -119,6 +202,8 @@
                 color #ccc
                 font-size 14px
                 background transparent
+                &.right_phone_number
+                  color black
             .login_verification
               position relative
               margin-top 16px
@@ -158,6 +243,8 @@
                   background #fff
                   box-shadow 0 2px 4px 0 rgba(0,0,0,.1)
                   transition transform .3s
+                  &.right
+                    transform translateX(27px)
             .login_hint
               margin-top 12px
               color #999
