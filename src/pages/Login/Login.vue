@@ -84,7 +84,7 @@
         </form>
         <a href="javascript:;" class="about_us">关于我们</a>
       </div>
-      <a href="javascript:" class="go_back">
+      <a href="javascript:" class="go_back" @click="$router.replace('/profile')">
         <i class="iconfont icon-jiantou2"></i>
       </a>
     </div>
@@ -92,7 +92,7 @@
 </template>
 
 <script type="text/scmascript-6">
-  import { Toast } from 'mint-ui'
+  import { Toast, MessageBox } from 'mint-ui'
   export default {
     data() {
       return {
@@ -139,7 +139,11 @@
         }
       },
 
+      /**
+       * 登录
+       */
       async login() {   
+        // 进行前台表单验证
         let names
         if(this.loginWay) {
           names = ['phone', 'code']
@@ -148,7 +152,30 @@
         }
         const success = await this.$validator.validateAll(names)
         if(success) {
-          alert('提交登录请求')
+          // 验证通过后发登录的请求
+          const { phone, code, name, pwd, captcha } = this
+          let result
+          if(this.loginWay) {
+            result = await this.$API.reqSmsLogin({phone, code})
+            // 请求结束后, 停止计时
+            this.computeTime = 0
+          } else {
+            result = await this.$API.reqPwdLogin({name, pwd, captcha})
+            if(result !== 0) { // 登录失败了
+              this.updateCaptcha() // 更新图形验证码
+              this.captcha = ''
+            }
+          }
+          // 根据请求的结果进行处理
+          if(result.code === 0) { // 登录请求成功
+            const user = result.data
+            // 保存user到state
+            this.$store.dispatch('saveUser', user)
+            // 跳转到个人中心
+            this.$router.replace('/profile')
+          } else { // 登录请求失败
+            MessageBox.alert(result.msg)
+          }
         }
       },
 

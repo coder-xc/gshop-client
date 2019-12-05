@@ -4,7 +4,10 @@
 import {
   RECEIVE_ADDRESS,
   RECEIVE_SHOPS,
-  RECEIVE_CATEGORYS
+  RECEIVE_CATEGORYS,
+  RECEIVE_USER,
+  RECEIVE_TOKEN,
+  LOGOUT
 } from './mutation-types'
 export default {
   [RECEIVE_ADDRESS](state, { address }) {
@@ -15,5 +18,15 @@ export default {
   },
   [RECEIVE_CATEGORYS](state, { categorys }) {
     state.categorys = categorys
+  },
+  [RECEIVE_USER](state, { user }) {
+    state.user = user
+  },
+  [RECEIVE_TOKEN](state, { token }) {
+    state.token = token
+  },
+  [LOGOUT](state) {
+    state.token = ''
+    state.user = {}
   }
 }
