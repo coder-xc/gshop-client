@@ -5,6 +5,7 @@ import {
 
 
 import './validate'
+import './mock/mockServer'
 import store from './vuex/store'
 import App from './App.vue'
 import router from './router'

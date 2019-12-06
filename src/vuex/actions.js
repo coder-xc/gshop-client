@@ -6,7 +6,10 @@ import {
   reqAddress,
   reqFoodCategorys,
   reqShops,
-  reqAutoLogin
+  reqAutoLogin,
+  reqGoods,
+  reqInfo,
+  reqRatings,
 } from '../api'
 import {
   RECEIVE_ADDRESS,
@@ -15,6 +18,10 @@ import {
   RECEIVE_USER,
   RECEIVE_TOKEN,
   LOGOUT,
+  RECEIVE_GOODS,
+  RECEIVE_INFO,
+  RECEIVE_RATINGS,
+
 } from './mutation-types'
 export default {
   /**
@@ -94,6 +101,42 @@ export default {
     if (result.code === 0) {
       const user = result.data
       commit(RECEIVE_USER, { user })
+    }
+  },
+
+  /**
+   * 异步获取商家信息
+   */
+  async getShopInfo({ commit }, callback) {
+    const result = await reqInfo()
+    if (result.code === 0) {
+      const info = result.data
+      commit(RECEIVE_INFO, { info })
+      typeof callback === 'function' && callback()
+    }
+  },
+
+  /**
+   * 异步获取商家评价列表
+   */
+  async getShopRatings({ commit }, callback) {
+    const result = await reqRatings()
+    if (result.code === 0) {
+      const ratings = result.data
+      commit(RECEIVE_RATINGS, { ratings })
+      typeof callback === 'function' && callback()
+    }
+  },
+
+  /**
+   * 异步获取商家商品列表
+   */
+  async getShopGoods({commit}, callback) {
+    const result = await reqGoods()
+    if(result.code === 0) {
+      const goods = result.data
+      commit(RECEIVE_GOODS, { goods })
+      typeof callback === 'function' && callback()
     }
   }
 
