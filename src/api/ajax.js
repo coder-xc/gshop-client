@@ -25,10 +25,10 @@ instance.interceptors.request.use((config) => {
 
   // 处理token问题
   const token = store.state.token
-  if(config.headers.needToken) {
-    if(token) {
-      config.headers['Authorization'] = token
-    } else {
+  if(token) {
+    config.headers['Authorization'] = token
+  } else {
+    if(config.headers.checkToken) {
       throw new Error('授权失败，请重新登录')
     }
   }
@@ -70,8 +70,6 @@ instance.interceptors.response.use(
       }
     }
     return new Promise(() => {}) // 返回一个pedding状态的promise
-   
-    
   }
 )
 export default instance

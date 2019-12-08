@@ -63,7 +63,7 @@ export default {
     const { longitude, latitude } = state
     const result = await reqShops({ longitude, latitude })
     // 2. 请求成功后, 提交mutation
-    if (result && result.code === 0) {
+    if (result.code === 0) {
       const shops = result.data
       commit(RECEIVE_SHOPS, { shops })
       // 在commit()更新状态数据之后调用回调函数
