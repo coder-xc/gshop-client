@@ -11,6 +11,7 @@ import App from './App.vue'
 import router from './router'
 import Header from './components/Header/Header.vue'
 import Star from './components/Star/Star.vue'
+import CartControl from '@/components/CartControl/CartControl.vue'
 import * as API from './api'
 
 Vue.config.productionTip = false
@@ -21,10 +22,14 @@ Vue.prototype.$API = API
 // 注册全局组件标签
 Vue.component('Header', Header)
 Vue.component('Star', Star)
+Vue.component('CartControl', CartControl)
 Vue.component(Button.name, Button)
 
+
 new Vue({
-  render: h => h(App),
+  // render: h => h(App),
+  components: {App},
+  template: '<App/>',
   router,
   store
 }).$mount('#app')

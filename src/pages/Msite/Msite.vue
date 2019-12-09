@@ -38,7 +38,8 @@
   import { mapState } from 'vuex'
   import Swiper from 'swiper'
   import 'swiper/css/swiper.min.css'
-  import ShopList from '../../components/ShopList/ShopList'
+  // import ShopList from '../../components/ShopList/ShopList'
+  import ShopList from 'components/ShopList/ShopList'
 
   
 
@@ -78,7 +79,11 @@
   
 
     computed: {
-      ...mapState(['address', 'categorys']),
+      // ...mapState(['address', 'categorys']),
+      ...mapState({
+        address: state => state.msite.address,
+        categorys: state => state.msite.categorys,
+      }),
       // 分类轮播的二维数据
       // 小数组的长度最大为8
       categorysArr() {

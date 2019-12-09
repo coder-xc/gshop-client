@@ -24,7 +24,9 @@
             <ul>
               <li 
                 class="food-item bottom-border-1px" 
-                v-for="(food, index) in good.foods" :key="food.name"
+                v-for="(food, index) in good.foods" 
+                :key="food.name"
+                @click="showFood(food)"
               >
                 <div class="icon">
                   <img width="57" height="57" :src="food.icon">
@@ -40,27 +42,7 @@
                     <span class="old" v-if="food.oldPrice">￥{{food.oldPrice}}</span>
                   </div>
                   <div class="cartcontrol-wrapper">
-                    CartControl组件
-                  </div>
-                </div>
-              </li>
-              <li class="food-item bottom-border-1px">
-                <div class="icon">
-                  <img width="57" height="57"
-                      src="http://fuss10.elemecdn.com/d/22/260bd78ee6ac6051136c5447fe307jpeg.jpeg?imageView2/1/w/114/h/114">
-                </div>
-                <div class="content">
-                  <h2 class="name">红豆薏米美肤粥</h2>
-                  <p class="desc">甜粥</p>
-                  <div class="extra">
-                    <span class="count">月售86份</span>
-                    <span>好评率100%</span>
-                  </div>
-                  <div class="price">
-                    <span class="now">￥12</span>
-                  </div>
-                  <div class="cartcontrol-wrapper">
-                    CartControl组件
+                    <CartControl :food="food"/>
                   </div>
                 </div>
               </li>
@@ -69,21 +51,28 @@
         </ul>
       </div>
     </div>
+    <Food :food="food" ref="food"/>
   </div>
 </template>
 
 <script type="text/scmascript-6">
   import { mapState } from 'vuex'
   import BScroll from '@better-scroll/core'
+
+  import Food from 'components/Food/Food.vue'
   export default {
 
     data() {
       return {
-        scrollY: 8, // 右侧列表滑动的y轴坐标, 右侧滑动过程中实时更新
+        scrollY: 0, // 右侧列表滑动的y轴坐标, 右侧滑动过程中实时更新
         tops: [], // 右侧所有分类的<li>的top的数组, 在列表显示之后更新一次
+        food: {}, // 需要显示的food
       }
     },
- 
+
+    components: {
+      Food
+    },
 
     mounted() {
       if(this.goods.length > 0) {
@@ -146,6 +135,7 @@
           tops.push(top)
         })
         // 更新tops
+        console.log(tops)
         this.tops = tops
       },
 
@@ -159,11 +149,24 @@
         this.scrollY = top
         // 让右侧列表滑动到对应的位置
         this.rightScroll.scrollTo(0, -top, 300)
+      },
+
+      // 显示指定food
+      showFood(food) {
+        // 指定要显示的food数据
+        this.food = food
+        // 显示food组件界面
+        this.$refs.food.toggleShow()
+
+        // 子组件更新父组件的状态数据: 父组件向子组件标签传递函数属性
+        // 父组件更新子组件的状态数据: 父组件通过ref得到子组件对象, 调用其更新状态数据的方法
       }
     },
 
     computed: {
-      ...mapState(['goods']),
+      ...mapState({
+        goods: state => state.shop.goods
+      }),
       /**
        * 当前分类的下标
        */
