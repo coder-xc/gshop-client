@@ -13,13 +13,15 @@ import {
   RECEIVE_INFO,
   RECEIVE_RATINGS,
   ADD_FOOD_COUNT,
-  REDUCE_FOOD_COUNT
+  REDUCE_FOOD_COUNT,
+  CLEAR_CART
 } from '../mutation-types'
 
 const state = {
   goods: [], // 商品列表
   ratings: [], // 商家评价列表
   info: {}, // 商家信息
+  cartFoods: [], // 
 }
 const mutations = {
   [RECEIVE_GOODS](state, { goods }) {
@@ -36,6 +38,8 @@ const mutations = {
       // 给food添加一个新的属性: 属性名为count, 值为1
       // food.count = 1 // 不会自动更新界面: 新增加的属性没有数据绑定
       Vue.set(food, 'count', 1)
+      // 将food添加到cartFoods
+      state.cartFoods.push(food)
     } else {
       food.count++
     }
@@ -43,8 +47,21 @@ const mutations = {
   [REDUCE_FOOD_COUNT](state, { food }) {
     if(food.count > 0) {
       food.count--
+      if(food.count === 0) {
+        // 将food从cartFoods移除
+        state.cartFoods.splice(state.cartFoods.indexOf(food), 1)
+      }
     }
   },
+  [CLEAR_CART](state) {
+    // 把购物车中所有food的count属性设置为0
+    state.cartFoods.forEach(food => {
+      food.count = 0
+    })
+
+    // 清除购物车数组中的foods
+    state.cartFoods = []
+  }
 }
 const actions = {
   /**
@@ -95,7 +112,36 @@ const actions = {
   }
 
 }
-const getters = {}
+const getters = {
+  // cartFoods(state) {
+  //   return state.goods.reduce((pre, good) => {
+  //     /* forEach */
+  //     // good.foods.forEach(food => {
+  //     //   if(food.count > 0) {
+  //     //     pre.push(food)
+  //     //   }
+  //     // })
+
+  //     /* reduce */
+  //     // good.foods.reduce((pre2, food)=> {
+  //     //   if(food.count > 0) {
+  //     //     pre.push(food)
+  //     //   }
+  //     //   return pre2
+  //     // }, pre)
+
+  //     /* filter */
+  //     pre.push(...good.foods.filter(food => food.count > 0))
+  //     return pre
+  //   }, [])
+  // }
+  totalCount(state) {
+    return state.cartFoods.reduce((pre, food) => pre + food.count, 0)
+  },
+  totalPrice(state) {
+    return state.cartFoods.reduce((pre, food) => pre + food.count * food.price, 0)
+  }
+}
 
 export default {
   state,

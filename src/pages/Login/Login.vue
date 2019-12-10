@@ -186,6 +186,9 @@
         // 如何让浏览器对图片重新请求: 图片地址携带一个时间戳参数
         this.$refs.captcha.src = `http://localhost:4000/captcha?time=${Date.now()}`
       }
+    },
+    beforeRouteEnter (to, from, next) {
+      // ...
     }
   }
 </script>
