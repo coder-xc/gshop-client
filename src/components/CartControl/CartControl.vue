@@ -12,10 +12,11 @@
   export default {
     props: {
       food: Object,
+      goods: Array,
     },
     methods: {
       updateFoodCount(isAdd) {
-        this.$store.dispatch('updateFoodCount', { isAdd, food: this.food })
+        this.$store.dispatch('updateFoodCount', { isAdd, food: this.food, goods: this.goods })
       }
     },
   }

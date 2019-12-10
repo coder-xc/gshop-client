@@ -17,3 +17,5 @@ export const ADD_FOOD_COUNT = 'add_food_count'
 export const REDUCE_FOOD_COUNT = 'reduce_food_count'
 
 export const CLEAR_CART = 'clear_cart'
+
+export const ADD_CATEGORY_COUNT = 'add_category_count'

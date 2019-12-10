@@ -14,7 +14,8 @@ import {
   RECEIVE_RATINGS,
   ADD_FOOD_COUNT,
   REDUCE_FOOD_COUNT,
-  CLEAR_CART
+  CLEAR_CART,
+  ADD_CATEGORY_COUNT
 } from '../mutation-types'
 
 const state = {
@@ -22,6 +23,7 @@ const state = {
   ratings: [], // 商家评价列表
   info: {}, // 商家信息
   cartFoods: [], // 
+
 }
 const mutations = {
   [RECEIVE_GOODS](state, { goods }) {
@@ -33,14 +35,41 @@ const mutations = {
   [RECEIVE_RATINGS](state, { ratings }) {
     state.ratings = ratings
   },
-  [ADD_FOOD_COUNT](state, { food }) {
+  [ADD_FOOD_COUNT](state, { food, goods }) {
+    
+
+
+
+
+
     if(!food.count) {
       // 给food添加一个新的属性: 属性名为count, 值为1
       // food.count = 1 // 不会自动更新界面: 新增加的属性没有数据绑定
       Vue.set(food, 'count', 1)
+      goods.forEach(good => {
+        if(!good.count) {
+          good.count = 0
+        }
+        good.foods.forEach(food => {
+          if(food.count) {
+            debugger  
+            good.count = good.count + food.count 
+          }
+        })
+      })
+
+
       // 将food添加到cartFoods
       state.cartFoods.push(food)
     } else {
+      goods.forEach(good => {
+        good.foods.forEach(food => {
+          if(food.count) {
+            debugger
+            good.count = good.count + food.count 
+          }
+        })
+      })
       food.count++
     }
   },
@@ -61,6 +90,13 @@ const mutations = {
 
     // 清除购物车数组中的foods
     state.cartFoods = []
+  },
+  [ADD_CATEGORY_COUNT](state, { good }) {
+    if(!good.count) {
+      Vue.set(good, 'count', 1)
+    } else {
+      good.count++
+    }
   }
 }
 const actions = {
@@ -103,13 +139,15 @@ const actions = {
   /**
    * 更新food数量的同步action
    */
-  updateFoodCount({commit}, { isAdd, food }) {
+  updateFoodCount({commit}, { isAdd, food, goods }) {
     if(isAdd) {
-      commit(ADD_FOOD_COUNT, { food })
+      commit(ADD_FOOD_COUNT, { food, goods })
     } else {
-      commit(REDUCE_FOOD_COUNT, { food })
+      commit(REDUCE_FOOD_COUNT, { food, goods })
     }
-  }
+  },
+
+  // updateCategoryCount({commit}, {})
 
 }
 const getters = {

@@ -10,6 +10,7 @@
             :class="{current: currentIndex === index}"
             @click="selectItem(index)"
           >
+            <div class="num"></div>
             <span class="text bottom-border-1px">
               <img class="icon" :src="good.icon" v-if="good.icon">
               {{good.name}}
@@ -42,7 +43,7 @@
                     <span class="old" v-if="food.oldPrice">￥{{food.oldPrice}}</span>
                   </div>
                   <div class="cartcontrol-wrapper">
-                    <CartControl :food="food"/>
+                    <CartControl :food="food"  :goods="goods"/>
                   </div>
                 </div>
               </li>
@@ -86,6 +87,7 @@
 
     watch: {
       goods() {
+        console.log(this.goods)
         this.$nextTick(() => {
           this.initScroll()
           this.initTops()
