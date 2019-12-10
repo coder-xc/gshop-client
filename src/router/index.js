@@ -19,7 +19,7 @@ const paths = ['/a', '/b'] // 需要进行登录检查的path的数组
 
 // 定义全局前置守卫
 router.beforeEach((to, from, next) => {
-    console.log('全局前置守卫', to, from)
+    // console.log('全局前置守卫', to, from)
     // 如果目标path在paths中, 但用户没有登录, 自动跳转到login
     if (paths.indexOf(to.path) !== -1 && !store.state.user.token) {
         next('/login')
