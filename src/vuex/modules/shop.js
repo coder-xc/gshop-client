@@ -35,53 +35,28 @@ const mutations = {
   [RECEIVE_RATINGS](state, { ratings }) {
     state.ratings = ratings
   },
-  [ADD_FOOD_COUNT](state, { food, goods }) {
-    
-
-
-
-
-
-    if(!food.count) {
-      // 给food添加一个新的属性: 属性名为count, 值为1
-      // food.count = 1 // 不会自动更新界面: 新增加的属性没有数据绑定
-      Vue.set(food, 'count', 1)
-      goods.forEach(good => {
-        if(!good.count) {
-          good.count = 0
-        }
-        good.foods.forEach(food => {
-          if(food.count) {
-            debugger  
-            good.count = good.count + food.count 
-          }
-        })
-      })
-
-
+  [ADD_FOOD_COUNT](state, { food, goods, index }) {
+    if (!food.count) {
       // 将food添加到cartFoods
       state.cartFoods.push(food)
-    } else {
-      goods.forEach(good => {
-        good.foods.forEach(food => {
-          if(food.count) {
-            debugger
-            good.count = good.count + food.count 
-          }
-        })
-      })
-      food.count++
     }
+    // 给food添加一个新的属性: 属性名为count, 值为1
+    // food.count = 1 // 不会自动更新界面: 新增加的属性没有数据绑定
+    Vue.set(food, 'count', food.count ? food.count + 1 : 1)
+    goods[index].count = goods[index].count ? goods[index].count + 1 : 1
   },
-  [REDUCE_FOOD_COUNT](state, { food }) {
-    if(food.count > 0) {
+
+  [REDUCE_FOOD_COUNT](state, { food, goods, index }) {
+    if (food.count > 0) {
       food.count--
-      if(food.count === 0) {
+      goods[index].count = goods[index].count ? goods[index].count - 1 : 0
+      if (food.count === 0) {
         // 将food从cartFoods移除
         state.cartFoods.splice(state.cartFoods.indexOf(food), 1)
       }
     }
   },
+
   [CLEAR_CART](state) {
     // 把购物车中所有food的count属性设置为0
     state.cartFoods.forEach(food => {
@@ -92,7 +67,7 @@ const mutations = {
     state.cartFoods = []
   },
   [ADD_CATEGORY_COUNT](state, { good }) {
-    if(!good.count) {
+    if (!good.count) {
       Vue.set(good, 'count', 1)
     } else {
       good.count++
@@ -127,10 +102,13 @@ const actions = {
   /**
    * 异步获取商家商品列表
    */
-  async getShopGoods({commit}, callback) {
+  async getShopGoods({ commit }, callback) {
     const result = await reqGoods()
-    if(result.code === 0) {
+    if (result.code === 0) {
       const goods = result.data
+      goods.forEach(good => {
+        good.count = 0
+      })
       commit(RECEIVE_GOODS, { goods })
       typeof callback === 'function' && callback()
     }
@@ -139,11 +117,11 @@ const actions = {
   /**
    * 更新food数量的同步action
    */
-  updateFoodCount({commit}, { isAdd, food, goods }) {
-    if(isAdd) {
-      commit(ADD_FOOD_COUNT, { food, goods })
+  updateFoodCount({ commit }, { isAdd, food, goods, index }) {
+    if (isAdd) {
+      commit(ADD_FOOD_COUNT, { food, goods, index })
     } else {
-      commit(REDUCE_FOOD_COUNT, { food, goods })
+      commit(REDUCE_FOOD_COUNT, { food, goods, index })
     }
   },
 

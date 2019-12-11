@@ -10,7 +10,7 @@
             :class="{current: currentIndex === index}"
             @click="selectItem(index)"
           >
-            <div class="num"></div>
+            <div class="num" v-if="good.count">{{good.count}}</div>
             <span class="text bottom-border-1px">
               <img class="icon" :src="good.icon" v-if="good.icon">
               {{good.name}}
@@ -25,7 +25,7 @@
             <ul>
               <li 
                 class="food-item bottom-border-1px" 
-                v-for="(food, index) in good.foods" 
+                v-for="(food, index2) in good.foods" 
                 :key="food.name"
                 @click="showFood(food)"
               >
@@ -43,7 +43,7 @@
                     <span class="old" v-if="food.oldPrice">￥{{food.oldPrice}}</span>
                   </div>
                   <div class="cartcontrol-wrapper">
-                    <CartControl :food="food"  :goods="goods"/>
+                    <CartControl :food="food"  :goods="goods" :index="index"/>
                   </div>
                 </div>
               </li>
@@ -87,7 +87,6 @@
 
     watch: {
       goods() {
-        console.log(this.goods)
         this.$nextTick(() => {
           this.initScroll()
           this.initTops()
@@ -207,11 +206,27 @@
       width: 80px
       background: #f3f5f7
       .menu-item
+        position relative
         display: table
         height: 54px
         width: 56px
         padding: 0 12px
         line-height: 14px
+        .num
+          position absolute
+          top 0
+          right 0
+          width 20px
+          height 16px
+          line-height 16px
+          text-align center
+          border-radius 16px
+          font-size 9px
+          font-weight 700
+          color #fff
+          background #f01414
+          -webkit-box-shadow 0 4px 8px 0 rgba(0,0,0,0.4)
+          box-shadow 0 4px 8px 0 rgba(0,0,0,0.4)
         &.current
           position: relative
           z-index: 10

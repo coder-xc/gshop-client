@@ -13,10 +13,17 @@
     props: {
       food: Object,
       goods: Array,
+      index: Number
     },
+    
     methods: {
       updateFoodCount(isAdd) {
-        this.$store.dispatch('updateFoodCount', { isAdd, food: this.food, goods: this.goods })
+        this.$store.dispatch('updateFoodCount', { 
+          isAdd, 
+          food: this.food, 
+          goods: this.goods, 
+          index: this.index 
+        })
       }
     },
   }
