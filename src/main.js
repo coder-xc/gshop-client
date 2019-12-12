@@ -15,6 +15,9 @@ import Star from './components/Star/Star.vue'
 import CartControl from '@/components/CartControl/CartControl.vue'
 import * as API from './api'
 
+import { serverURL } from './api/serverConfig'
+
+Vue.prototype.serverURL = serverURL
 Vue.use(VueLazyload, { // 内部定义了一个全局指令: lazy
   loading,
 })

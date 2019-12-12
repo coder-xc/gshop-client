@@ -3,14 +3,17 @@
  */
 import axios from 'axios'
 import qs from 'qs'
-import { MessageBox, Toast } from 'mint-ui'
+import { Toast } from 'mint-ui'
 import store from '../vuex/store'
 import router from '../router'
+
+const BASE_URL = 'http://47.103.209.198' // 生产环境
+// const BASE_URL = '' // 开发环境
 
 // 创建一个Axios的实例(功能上)
 const instance = axios.create({
   timeout: 10000, // 设置请求超时时间
-  baseURL: '/api' // 所有的请求都有一个基础路径
+  baseURL: BASE_URL + '/api' // 所有的请求都有一个基础路径
 })
 
 /**

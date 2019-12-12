@@ -10,7 +10,7 @@
       </div>
       <div class="login_content">
         <form name="names">
-          <div :class="{on: loginWay}">,
+          <div :class="{on: loginWay}">
             <section class="login_message">
               <input 
                 type="tel" 
@@ -76,7 +76,7 @@
                   v-validate="{required: true,regex: /^[0-9a-zA-Z]{4}$/}"
                 >
                 <span style="color: red;" v-show="errors.has('captcha')">{{ errors.first('captcha') }}</span>
-                <img ref="captcha" class="get_verification" src="http://localhost:4000/captcha" alt="captcha" @click="updateCaptcha">
+                <img ref="captcha" class="get_verification" :src="`${serverURL}/captcha`" alt="captcha" @click="updateCaptcha">
               </section>
             </section>
           </div>
@@ -106,7 +106,7 @@
         isShowPwd: false, // 是否显示密码
       }
     },
-  
+
     computed: {
       /* 判断phone是否是一个正确的手机号 */
       isRigthPhone() {
@@ -184,7 +184,7 @@
        */
       updateCaptcha() {
         // 如何让浏览器对图片重新请求: 图片地址携带一个时间戳参数
-        this.$refs.captcha.src = `http://localhost:4000/captcha?time=${Date.now()}`
+        this.$refs.captcha.src = `${this.serverURL}/captcha?time=${Date.now()}`
       }
     },
 
